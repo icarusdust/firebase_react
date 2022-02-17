@@ -40,7 +40,7 @@ workflows:
                 cd android && ./gradlew assembleRelease
                 
                 
-            - name: Firebse:
+            - name: Firebse
               script: | 
                 echo "Find build artifacts"
                 dsymPath=$(find $FCI_BUILD_DIR/build/ios/archive/Runner.xcarchive $FCI_BUILD_DIR/build/ios/xcarchive/Runner.xcarchive -name "*.dSYM.zip" | head -1)
