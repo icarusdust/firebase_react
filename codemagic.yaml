@@ -33,23 +33,16 @@ workflows:
                 # export NEW_BUILD_NUMBER=$(($(google-play get-latest-build-number --package-name "$PACKAGE_NAME" --tracks=alpha) + 1))
                 export LATEST_GOOGLE_PLAY_BUILD_NUMBER=$(($(google-play get-latest-build-number --package-name "$PACKAGE_NAME") + 1))
                 cd android && ./gradlew assembleRelease
-                
-                
-            - name: Firebse
-              script: | 
-                echo "Find build artifacts"
-                dsymPath=$(find $FCI_BUILD_DIR/build/ios/archive/Runner.xcarchive $FCI_BUILD_DIR/build/ios/xcarchive/Runner.xcarchive -name "*.dSYM.zip" | head -1)
-                if [[ -z ${dsymPath} ]]
-                then
-                  echo "No debug symbols were found, skip publishing to Firebase Crashlytics"
-                else
-                  echo "Publishing debug symbols from $dsymPath to Firebase Crashlytics"
-                  ls -d -- ios/Pods/*
-                  $FCI_BUILD_DIR/ios/Pods/FirebaseCrashlytics/upload-symbols -gsp ios/Runner/GoogleService-Info.plist -p ios $dsymPath
-                fi
+            - name: Test Build:
+              script: |
+                cd android && ./gradlew assembleAndroidTest
+            - name: CodeCov
+              script: |
+                pip install pytest
+                pip install pytest-cov
+                pytest --cov=./ --cov-report=xml
         artifacts:
-            - android/app/build/outputs/**/*.apk
-            
+            - android/app/build/outputs/**/*.apk         
         publishing:
            firebase:
 #              firebase_token: $FIREBASE_TOKEN
