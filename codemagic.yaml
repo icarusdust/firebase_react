@@ -24,8 +24,7 @@ workflows:
                 echo "sdk.dir=$ANDROID_SDK_ROOT" > "$FCI_BUILD_DIR/android/local.properties"
             - name: Set up keystore
               script: |
-                    echo $CM_KEYSTORE | base64 --decode > /tmp/keystore.keystore
-                     
+                    echo $CM_KEYSTORE | base64 --decode > /tmp/keystore.keystore                  
             - name: Build Android release
               script: |
                 # Set environment variable so it can be used to increment build number in android/app/build.gradle
@@ -33,7 +32,7 @@ workflows:
                 # export NEW_BUILD_NUMBER=$(($(google-play get-latest-build-number --package-name "$PACKAGE_NAME" --tracks=alpha) + 1))
                 export LATEST_GOOGLE_PLAY_BUILD_NUMBER=$(($(google-play get-latest-build-number --package-name "$PACKAGE_NAME") + 1))
                 cd android && ./gradlew assembleRelease
-            - name: Test Build:
+            - name: Test Build
               script: |
                 cd android && ./gradlew assembleAndroidTest
             - name: CodeCov
